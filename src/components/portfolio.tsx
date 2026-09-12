@@ -30,10 +30,7 @@ import {
 } from "lucide-react";
 import { z } from "zod";
 
-import emailjs from "@emailjs/browser";
-import { toast } from "sonner";
-
-import profilePhoto from "@/assets/profile.jpg";
+import profilePlaceholder from "@/assets/profile-placeholder.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,7 +42,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Toaster } from "@/components/ui/sonner";
 
 const navItems = [
   ["Home", "home"],
@@ -202,20 +198,19 @@ function Navbar({ theme, onToggle }: { theme: "light" | "dark"; onToggle: () => 
 
 function ProfileVisual() {
   return (
-    <div className="profile-stage">
+    <div className="profile-stage" aria-label="Professional profile photo placeholder">
       <span className="floating-tag tag-code">&lt;React /&gt;</span>
       <span className="floating-tag tag-design">Design → Code</span>
       <div className="profile-frame">
         <div className="profile-arch">
-          <img src={profilePhoto} width={1265} height={1599} alt="Parigi Vijaya Vidyullatha, UI and frontend developer based in Hyderabad" />
+          <img src={profilePlaceholder} width={1024} height={1200} alt="Professional profile photo placeholder for Parigi Vijaya Vidyullatha" />
         </div>
-        <div className="photo-label"><span>Parigi Vijaya Vidyullatha</span><small>Hyderabad, India</small></div>
+        <div className="photo-label"><span>Professional profile photo</span><small>Ready to replace</small></div>
       </div>
       <div className="experience-float"><strong>4+</strong><span>Years in<br />UI / Frontend</span></div>
     </div>
   );
 }
-
 
 function Hero() {
   return (
@@ -364,19 +359,13 @@ function WhyMe() {
   );
 }
 
-const EMAILJS_SERVICE_ID = "service_v7rnvu5";
-const EMAILJS_TEMPLATE_ID = "template_crq18rs";
-const EMAILJS_PUBLIC_KEY = "JZST6oOyysup7sF7O";
-
 function ContactForm() {
   const [projectType, setProjectType] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
-  const [sending, setSending] = useState(false);
 
-  const submit = async (event: FormEvent<HTMLFormElement>) => {
+  const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formElement = event.currentTarget;
-    const form = new FormData(formElement);
+    const form = new FormData(event.currentTarget);
     const result = inquirySchema.safeParse({ name: form.get("name"), email: form.get("email"), projectType, message: form.get("message") });
     if (!result.success) {
       const nextErrors: FormErrors = {};
@@ -385,32 +374,10 @@ function ContactForm() {
       return;
     }
     setErrors({});
-    setSending(true);
-    try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          name: result.data.name,
-          from_name: result.data.name,
-          email: result.data.email,
-          reply_to: result.data.email,
-          project_type: result.data.projectType,
-          message: result.data.message,
-          title: `${result.data.projectType} inquiry from ${result.data.name}`,
-        },
-        { publicKey: EMAILJS_PUBLIC_KEY },
-      );
-      toast.success("Thank you! Your message has been sent.");
-      formElement.reset();
-      setProjectType("");
-    } catch {
-      toast.error("Message could not be sent. Please email pvvidyullatha1991@gmail.com directly.");
-    } finally {
-      setSending(false);
-    }
+    const subject = encodeURIComponent(`${result.data.projectType} inquiry from ${result.data.name}`);
+    const body = encodeURIComponent(`Hello Vidyullatha,\n\n${result.data.message}\n\nFrom: ${result.data.name}\nEmail: ${result.data.email}`);
+    window.location.href = `mailto:pvvidyullatha1991@gmail.com?subject=${subject}&body=${body}`;
   };
-
 
   return (
     <form className="contact-form" onSubmit={submit} noValidate>
@@ -420,8 +387,8 @@ function ContactForm() {
       </div>
       <div className="field"><Label htmlFor="project-type">Project Type</Label><Select value={projectType} onValueChange={setProjectType}><SelectTrigger id="project-type" aria-invalid={Boolean(errors.projectType)} aria-describedby={errors.projectType ? "project-type-error" : undefined}><SelectValue placeholder="Choose a service" /></SelectTrigger><SelectContent>{projectTypes.map((type) => <SelectItem value={type} key={type}>{type}</SelectItem>)}</SelectContent></Select>{errors.projectType ? <p id="project-type-error" className="field-error">{errors.projectType}</p> : null}</div>
       <div className="field"><Label htmlFor="message">Message</Label><Textarea id="message" name="message" rows={6} maxLength={1200} aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? "message-error" : undefined} placeholder="Tell me about your goals, timeline, and what you need help with." />{errors.message ? <p id="message-error" className="field-error">{errors.message}</p> : null}</div>
-      <Button type="submit" size="lg" disabled={sending}>{sending ? "Sending…" : "Send Message"} <Send aria-hidden="true" /></Button>
-      <p className="form-note">Your message is delivered straight to my inbox — I usually reply within a day.</p>
+      <Button type="submit" size="lg">Send Message <Send aria-hidden="true" /></Button>
+      <p className="form-note">This opens your email app with the project details prepared.</p>
     </form>
   );
 }
@@ -468,5 +435,5 @@ export function Portfolio() {
     document.documentElement.classList.toggle("dark", next === "dark");
     window.localStorage.setItem("pv-theme", next);
   };
-  return <><Navbar theme={theme} onToggle={toggleTheme} /><Hero /><About /><Skills /><Experience /><Projects /><Services /><CreativeWork /><Education /><WhyMe /><Contact /><Footer /><Toaster position="top-center" richColors /></>;
+  return <><Navbar theme={theme} onToggle={toggleTheme} /><Hero /><About /><Skills /><Experience /><Projects /><Services /><CreativeWork /><Education /><WhyMe /><Contact /><Footer /></>;
 }
