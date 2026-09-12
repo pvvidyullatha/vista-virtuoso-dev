@@ -363,13 +363,19 @@ function WhyMe() {
   );
 }
 
+const EMAILJS_SERVICE_ID = "service_v7rnvu5";
+const EMAILJS_TEMPLATE_ID = "template_crq18rs";
+const EMAILJS_PUBLIC_KEY = "JZST6oOyysup7sF7O";
+
 function ContactForm() {
   const [projectType, setProjectType] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
+  const [sending, setSending] = useState(false);
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const result = inquirySchema.safeParse({ name: form.get("name"), email: form.get("email"), projectType, message: form.get("message") });
     if (!result.success) {
       const nextErrors: FormErrors = {};
@@ -378,10 +384,32 @@ function ContactForm() {
       return;
     }
     setErrors({});
-    const subject = encodeURIComponent(`${result.data.projectType} inquiry from ${result.data.name}`);
-    const body = encodeURIComponent(`Hello Vidyullatha,\n\n${result.data.message}\n\nFrom: ${result.data.name}\nEmail: ${result.data.email}`);
-    window.location.href = `mailto:pvvidyullatha1991@gmail.com?subject=${subject}&body=${body}`;
+    setSending(true);
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          name: result.data.name,
+          from_name: result.data.name,
+          email: result.data.email,
+          reply_to: result.data.email,
+          project_type: result.data.projectType,
+          message: result.data.message,
+          title: `${result.data.projectType} inquiry from ${result.data.name}`,
+        },
+        { publicKey: EMAILJS_PUBLIC_KEY },
+      );
+      toast.success("Thank you! Your message has been sent.");
+      formElement.reset();
+      setProjectType("");
+    } catch {
+      toast.error("Message could not be sent. Please email pvvidyullatha1991@gmail.com directly.");
+    } finally {
+      setSending(false);
+    }
   };
+
 
   return (
     <form className="contact-form" onSubmit={submit} noValidate>
