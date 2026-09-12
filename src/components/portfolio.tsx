@@ -45,6 +45,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Toaster } from "@/components/ui/sonner";
 
 const navItems = [
   ["Home", "home"],
@@ -467,5 +468,5 @@ export function Portfolio() {
     document.documentElement.classList.toggle("dark", next === "dark");
     window.localStorage.setItem("pv-theme", next);
   };
-  return <><Navbar theme={theme} onToggle={toggleTheme} /><Hero /><About /><Skills /><Experience /><Projects /><Services /><CreativeWork /><Education /><WhyMe /><Contact /><Footer /></>;
+  return <><Navbar theme={theme} onToggle={toggleTheme} /><Hero /><About /><Skills /><Experience /><Projects /><Services /><CreativeWork /><Education /><WhyMe /><Contact /><Footer /><Toaster position="top-center" richColors /></>;
 }
