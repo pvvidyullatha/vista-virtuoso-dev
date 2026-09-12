@@ -419,8 +419,8 @@ function ContactForm() {
       </div>
       <div className="field"><Label htmlFor="project-type">Project Type</Label><Select value={projectType} onValueChange={setProjectType}><SelectTrigger id="project-type" aria-invalid={Boolean(errors.projectType)} aria-describedby={errors.projectType ? "project-type-error" : undefined}><SelectValue placeholder="Choose a service" /></SelectTrigger><SelectContent>{projectTypes.map((type) => <SelectItem value={type} key={type}>{type}</SelectItem>)}</SelectContent></Select>{errors.projectType ? <p id="project-type-error" className="field-error">{errors.projectType}</p> : null}</div>
       <div className="field"><Label htmlFor="message">Message</Label><Textarea id="message" name="message" rows={6} maxLength={1200} aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? "message-error" : undefined} placeholder="Tell me about your goals, timeline, and what you need help with." />{errors.message ? <p id="message-error" className="field-error">{errors.message}</p> : null}</div>
-      <Button type="submit" size="lg">Send Message <Send aria-hidden="true" /></Button>
-      <p className="form-note">This opens your email app with the project details prepared.</p>
+      <Button type="submit" size="lg" disabled={sending}>{sending ? "Sending…" : "Send Message"} <Send aria-hidden="true" /></Button>
+      <p className="form-note">Your message is delivered straight to my inbox — I usually reply within a day.</p>
     </form>
   );
 }
