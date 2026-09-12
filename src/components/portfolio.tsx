@@ -30,7 +30,10 @@ import {
 } from "lucide-react";
 import { z } from "zod";
 
-import profilePlaceholder from "@/assets/profile-placeholder.png";
+import emailjs from "@emailjs/browser";
+import { toast } from "sonner";
+
+import profilePhoto from "@/assets/profile.jpg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -198,19 +201,20 @@ function Navbar({ theme, onToggle }: { theme: "light" | "dark"; onToggle: () => 
 
 function ProfileVisual() {
   return (
-    <div className="profile-stage" aria-label="Professional profile photo placeholder">
+    <div className="profile-stage">
       <span className="floating-tag tag-code">&lt;React /&gt;</span>
       <span className="floating-tag tag-design">Design → Code</span>
       <div className="profile-frame">
         <div className="profile-arch">
-          <img src={profilePlaceholder} width={1024} height={1200} alt="Professional profile photo placeholder for Parigi Vijaya Vidyullatha" />
+          <img src={profilePhoto} width={1265} height={1599} alt="Parigi Vijaya Vidyullatha, UI and frontend developer based in Hyderabad" />
         </div>
-        <div className="photo-label"><span>Professional profile photo</span><small>Ready to replace</small></div>
+        <div className="photo-label"><span>Parigi Vijaya Vidyullatha</span><small>Hyderabad, India</small></div>
       </div>
       <div className="experience-float"><strong>4+</strong><span>Years in<br />UI / Frontend</span></div>
     </div>
   );
 }
+
 
 function Hero() {
   return (
