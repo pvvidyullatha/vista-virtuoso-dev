@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   ArrowRight,
   BadgeCheck,
@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { z } from "zod";
 
-import profilePlaceholder from "@/assets/profile-placeholder.png";
+import profilePhoto from "@/assets/vidyullatha-profile.jpg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -198,14 +198,13 @@ function Navbar({ theme, onToggle }: { theme: "light" | "dark"; onToggle: () => 
 
 function ProfileVisual() {
   return (
-    <div className="profile-stage" aria-label="Professional profile photo placeholder">
+    <div className="profile-stage" aria-label="Portrait of Parigi Vijaya Vidyullatha">
       <span className="floating-tag tag-code">&lt;React /&gt;</span>
       <span className="floating-tag tag-design">Design → Code</span>
       <div className="profile-frame">
         <div className="profile-arch">
-          <img src={profilePlaceholder} width={1024} height={1200} alt="Professional profile photo placeholder for Parigi Vijaya Vidyullatha" />
+          <img src={profilePhoto} width={1265} height={1599} alt="Parigi Vijaya Vidyullatha, UI and Frontend Developer" />
         </div>
-        <div className="photo-label"><span>Professional profile photo</span><small>Ready to replace</small></div>
       </div>
       <div className="experience-float"><strong>4+</strong><span>Years in<br />UI / Frontend</span></div>
     </div>
@@ -362,33 +361,65 @@ function WhyMe() {
 function ContactForm() {
   const [projectType, setProjectType] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (status === "sending") return;
     const form = new FormData(event.currentTarget);
     const result = inquirySchema.safeParse({ name: form.get("name"), email: form.get("email"), projectType, message: form.get("message") });
     if (!result.success) {
       const nextErrors: FormErrors = {};
       result.error.issues.forEach((issue) => { const key = issue.path[0] as keyof FormErrors; if (!nextErrors[key]) nextErrors[key] = issue.message; });
       setErrors(nextErrors);
+      setStatus("idle");
       return;
     }
     setErrors({});
-    const subject = encodeURIComponent(`${result.data.projectType} inquiry from ${result.data.name}`);
-    const body = encodeURIComponent(`Hello Vidyullatha,\n\n${result.data.message}\n\nFrom: ${result.data.name}\nEmail: ${result.data.email}`);
-    window.location.href = `mailto:pvvidyullatha1991@gmail.com?subject=${subject}&body=${body}`;
+    setStatus("sending");
+    try {
+      const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service_id: "service_v7rnvu5",
+          template_id: "template_crq18rs",
+          user_id: "JZST6oOyysup7sF7O",
+          template_params: {
+            from_name: result.data.name,
+            name: result.data.name,
+            from_email: result.data.email,
+            email: result.data.email,
+            reply_to: result.data.email,
+            project_type: result.data.projectType,
+            subject: `${result.data.projectType} inquiry from ${result.data.name}`,
+            message: result.data.message,
+            to_name: "Vidyullatha",
+          },
+        }),
+      });
+      if (!response.ok) throw new Error("Email service rejected the message");
+      setStatus("success");
+      formRef.current?.reset();
+      setProjectType("");
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
-    <form className="contact-form" onSubmit={submit} noValidate>
+    <form ref={formRef} className="contact-form" onSubmit={submit} noValidate>
       <div className="form-grid">
         <div className="field"><Label htmlFor="name">Name</Label><Input id="name" name="name" autoComplete="name" maxLength={100} aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? "name-error" : undefined} placeholder="Your name" />{errors.name ? <p id="name-error" className="field-error">{errors.name}</p> : null}</div>
         <div className="field"><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" autoComplete="email" maxLength={255} aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "email-error" : undefined} placeholder="you@example.com" />{errors.email ? <p id="email-error" className="field-error">{errors.email}</p> : null}</div>
       </div>
       <div className="field"><Label htmlFor="project-type">Project Type</Label><Select value={projectType} onValueChange={setProjectType}><SelectTrigger id="project-type" aria-invalid={Boolean(errors.projectType)} aria-describedby={errors.projectType ? "project-type-error" : undefined}><SelectValue placeholder="Choose a service" /></SelectTrigger><SelectContent>{projectTypes.map((type) => <SelectItem value={type} key={type}>{type}</SelectItem>)}</SelectContent></Select>{errors.projectType ? <p id="project-type-error" className="field-error">{errors.projectType}</p> : null}</div>
       <div className="field"><Label htmlFor="message">Message</Label><Textarea id="message" name="message" rows={6} maxLength={1200} aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? "message-error" : undefined} placeholder="Tell me about your goals, timeline, and what you need help with." />{errors.message ? <p id="message-error" className="field-error">{errors.message}</p> : null}</div>
-      <Button type="submit" size="lg">Send Message <Send aria-hidden="true" /></Button>
-      <p className="form-note">This opens your email app with the project details prepared.</p>
+      <Button type="submit" size="lg" disabled={status === "sending"}>{status === "sending" ? "Sending…" : "Send Message"} <Send aria-hidden="true" /></Button>
+      <p className={`form-note form-status ${status}`} role="status" aria-live="polite">
+        {status === "success" ? "Thank you — your message has been sent successfully." : status === "error" ? "The message couldn’t be sent. Please email me directly instead." : "Your details are sent securely to my inbox."}
+      </p>
     </form>
   );
 }
