@@ -5,4 +5,4 @@
 - [x] Add accessible navigation, theme persistence, and EmailJS contact form
 - [x] Add route metadata and structured profile data
 - [x] Add Vidyullatha's profile photo in a circular hero portrait
-- [ ] Verify desktop/mobile layout, interactions, accessibility basics, and errors
+- [x] Verify desktop/mobile layout, interactions, accessibility basics, and errors
