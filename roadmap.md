@@ -6,3 +6,5 @@
 - [x] Add route metadata and structured profile data
 - [x] Add Vidyullatha's profile photo in a circular hero portrait
 - [x] Verify desktop/mobile layout, interactions, accessibility basics, and errors
+
+- [ ] Connect custom domain vydyaworks.online (owned at Hostinger) — guide user through DNS records
