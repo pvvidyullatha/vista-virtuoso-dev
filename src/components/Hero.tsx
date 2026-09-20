@@ -16,7 +16,7 @@ const Hero: React.FC = () => {
         <div style={{ width:340, height:340, borderRadius:'32px', background:'linear-gradient(135deg,#7C3AED22,#06B6D422)', border:'2px solid #7C3AED30', display:'flex', alignItems:'center', justifyContent:'center', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', inset:-8, borderRadius:40, background:'linear-gradient(135deg,#7C3AED,#06B6D4)', opacity:0.15, filter:'blur(20px)' }}></div>
           
-          {/* YOUR REAL PHOTO - will show after you upload public/profile.jpg */}
+          {/* YOUR REAL PHOTO - will show after you upload assets/vidyullatha-profile.jpg */}
           <img 
             src="/profile.jpg" 
             alt="Vidyullatha - UI Developer" 
