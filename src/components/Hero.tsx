@@ -13,9 +13,19 @@ const Hero: React.FC = () => {
         <button style={{ marginTop:16, padding:'10px 20px', borderRadius:8, border:'1px solid #ddd', background:'white', cursor:'pointer' }}>Download CV</button>
       </div>
       <div style={{ flex:1, minWidth:300, display:'flex', justifyContent:'center' }}>
-        <div style={{ width:320, height:320, borderRadius:'32px', background:'linear-gradient(135deg,#7C3AED22,#06B6D422)', border:'2px solid #7C3AED30', display:'flex', alignItems:'center', justifyContent:'center', position:'relative' }}>
+        <div style={{ width:340, height:340, borderRadius:'32px', background:'linear-gradient(135deg,#7C3AED22,#06B6D422)', border:'2px solid #7C3AED30', display:'flex', alignItems:'center', justifyContent:'center', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', inset:-8, borderRadius:40, background:'linear-gradient(135deg,#7C3AED,#06B6D4)', opacity:0.15, filter:'blur(20px)' }}></div>
-          <span style={{ color:'#7C3AED', fontWeight:600 }}>Professional Photo<br/>Placeholder</span>
+          
+          {/* YOUR REAL PHOTO - will show after you upload public/profile.jpg */}
+          <img 
+            src="/profile.jpg" 
+            alt="Vidyullatha - UI Developer" 
+            style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'32px', position:'relative', zIndex:1 }}
+            onError={(e) => {
+              // If photo not found, show placeholder
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
         </div>
       </div>
     </section>
