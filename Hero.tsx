@@ -1,5 +1,5 @@
 import React from 'react'
-import profileImg from '../assets/profile.jpg'
+import profileImg from '../assets/vidyullatha-profile.jpg'
 
 const Hero: React.FC = () => {
   return (
@@ -16,10 +16,9 @@ const Hero: React.FC = () => {
       <div style={{ flex:1, minWidth:300, display:'flex', justifyContent:'center' }}>
         <div style={{ width:340, height:340, borderRadius:'32px', background:'linear-gradient(135deg,#7C3AED22,#06B6D422)', border:'2px solid #7C3AED30', display:'flex', alignItems:'center', justifyContent:'center', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', inset:-8, borderRadius:40, background:'linear-gradient(135deg,#7C3AED,#06B6D4)', opacity:0.15, filter:'blur(20px)' }}></div>
-          
           <img 
             src={profileImg} 
-            alt="Vidyullatha" 
+            alt="Vidyullatha - UI & Frontend Developer" 
             style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'32px', position:'relative', zIndex:1 }} 
           />
         </div>
