@@ -8,8 +8,10 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
+    // Generate static index.html at build time for Netlify
+    pages: [{ path: "/" }],
+    prerender: { enabled: true, autoStaticPathsDiscovery: false },
     server: { entry: "server" },
   },
 });
+
