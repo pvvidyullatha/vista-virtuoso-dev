@@ -8,10 +8,9 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   tanstackStart: {
-    // Generate static index.html at build time for Netlify
-    pages: [{ path: "/" }],
-    prerender: { enabled: true, autoStaticPathsDiscovery: false },
+    // Rendered on demand by the Netlify server function (nitro's netlify preset),
+    // so no build-time prerendering is needed.
+    prerender: { enabled: false },
     server: { entry: "server" },
   },
 });
-
